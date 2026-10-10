@@ -1,5 +1,7 @@
 # codeup
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 Secure, cross-platform launcher for official `aliyun devops` operations. Python
 3.10+; one runtime dependency, `keyring`. No API client, server or CLI fork.
 
