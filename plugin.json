@@ -1,0 +1,6 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "aliyun-codeup-skill",
+  "version": "0.2.0",
+  "description": "Yunxiao workflows through a standalone codeup CLI and the official Alibaba Cloud DevOps plugin."
+}

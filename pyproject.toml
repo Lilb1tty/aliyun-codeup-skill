@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aliyun-codeup-cli"
+version = "0.2.0"
+description = "Secure setup and credential wrapper for Alibaba Cloud DevOps CLI"
+requires-python = ">=3.10"
+dependencies = ["keyring>=25,<27"]
+
+[project.scripts]
+codeup = "codeup_cli:main"
+
+[tool.setuptools]
+py-modules = ["codeup_cli"]
+packages = ["codeup_secure"]

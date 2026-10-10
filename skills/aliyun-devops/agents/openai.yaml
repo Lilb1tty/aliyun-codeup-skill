@@ -1,0 +1,4 @@
+interface:
+  display_name: "Alibaba Cloud DevOps"
+  short_description: "Use Yunxiao through the codeup CLI wrapper"
+  default_prompt: "Follow the official alibabacloud-devops Skill, routing every CLI operation through codeup exec -- aliyun devops with secure active-profile authentication."

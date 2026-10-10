@@ -1,0 +1,10 @@
+.env
+.env.*
+.research/
+__pycache__/
+*.egg-info/
+build/
+dist/
+.venv/
+*.token
+aliyun-cli-devops/config.json
