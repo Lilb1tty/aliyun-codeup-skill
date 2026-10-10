@@ -125,32 +125,35 @@ Diagnostics use fixed JSON error codes without raw subprocess/keyring exceptions
 
 ## Claude Code and Codex
 
-Use the official [Alibaba Cloud DevOps Skill](https://github.com/aliyun/alibabacloud-aiops-skills/tree/master/skills/developertools/rdc/alibabacloud-devops).
-Obtain/verify that repository, then install a **project-local adapter**:
+After installing `codeup`, the official Alibaba CLI and its `aliyun-cli-devops`
+plugin, complete `codeup setup` and install the Skills. Choose Codex or Claude Code
+when prompted:
 
 ```sh
-codeup integrate --agent codex --project /path/to/project --official-skill /path/to/alibabacloud-aiops-skills/skills/developertools/rdc/alibabacloud-devops
-codeup integrate --agent claude --project /path/to/project --official-skill /path/to/alibabacloud-aiops-skills/skills/developertools/rdc/alibabacloud-devops
+npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-devops
+npx skills add Lilb1tty/aliyun-codeup-skill --skill aliyun-devops
 ```
 
-The installer writes `.agents/skills/aliyun-devops/` (Codex) or
-`.claude/skills/aliyun-devops/` (Claude), copying official files unchanged under
-`references/official` and recording the upstream Skill hash. It refuses to
-overwrite existing adapters. Review/remove the old adapter explicitly to update.
-Restart/reload the agent as required by its Skill discovery mechanism.
+Alternatively, copy this repository's entire `skills/aliyun-devops/` directory,
+including its references, to the corresponding project directory:
 
-Natural-language examples: “List my Yunxiao projects”, “Show unresolved work items
-assigned to me”, “Create an issue for the current sprint.” The adapter delegates
-discovery/workflows to the official Skill and instructs it to invoke codeup
-automatically. Users do not enter `codeup exec` for every request. Upstream token
-environment checks and direct scripts/MCP fallbacks are replaced by codeup checks
-and execution. Globally installed third-party files and the official binary are
-not modified. The repository plugin Skill provides equivalent routing instructions
-for environments where the official Skill is already available.
+- Codex: `.agents/skills/aliyun-devops/`
+- Claude Code: `.claude/skills/aliyun-devops/`
 
-This is **instruction-based Skill integration**, not transparent executable
-interception. Automated tests verify adapter installation and subprocess dispatch;
-real natural-language agent behavior needs the end-to-end acceptance run below.
+Also install the official
+[Alibaba Cloud DevOps Skill](https://github.com/aliyun/alibabacloud-aiops-skills/tree/master/skills/developertools/rdc/alibabacloud-devops)
+as `alibabacloud-devops/` under the same Skills directory if it is not already available.
+Restart or reload the agent session after installation.
+
+You can then make natural-language requests:
+
+- “List my Yunxiao projects.”
+- “Show unresolved work items assigned to me.”
+- “Create a test requirement in the current project.”
+
+The `aliyun-devops` Skill uses the official Skill's workflows and directs the
+agent to execute commands through `codeup`. You do not need to enter `codeup exec`
+in each request. See the [security boundary](docs/security.md) for details.
 
 ## Validation and documentation
 

@@ -132,34 +132,34 @@ log-level、AI/请求检查模式或 dry-run。相关配置应通过配置管理
 
 ## Claude Code 与 Codex 集成
 
-使用官方 [Alibaba Cloud DevOps Skill](https://github.com/aliyun/alibabacloud-aiops-skills/tree/master/skills/developertools/rdc/alibabacloud-devops)。
-获取并确认官方仓库来源后，安装**项目级适配器**：
+安装好 `codeup`、官方 Alibaba Cloud CLI 和 `aliyun-cli-devops` 插件，并完成
+`codeup setup` 后，安装 Skill 即可。使用以下命令，按提示选择 Codex 或 Claude Code：
 
 ```sh
-codeup integrate --agent codex --project /path/to/project --official-skill /path/to/alibabacloud-aiops-skills/skills/developertools/rdc/alibabacloud-devops
-codeup integrate --agent claude --project /path/to/project --official-skill /path/to/alibabacloud-aiops-skills/skills/developertools/rdc/alibabacloud-devops
+npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-devops
+npx skills add Lilb1tty/aliyun-codeup-skill --skill aliyun-devops
 ```
 
-Codex 适配器写入 `.agents/skills/aliyun-devops/`，Claude Code 适配器写入
-`.claude/skills/aliyun-devops/`。官方文件原样复制到 `references/official`，
-同时记录上游 Skill 的哈希值。安装器不会覆盖已有适配器；更新前需明确检查并移除
-旧版本。按对应 Agent 的 Skill 加载机制重启或重新加载会话。
+也可以将本仓库的 `skills/aliyun-devops/` 整个目录（含引用文件）直接复制到对应的
+项目目录：
+
+- Codex：`.agents/skills/aliyun-devops/`
+- Claude Code：`.claude/skills/aliyun-devops/`
+
+若尚未安装官方
+[Alibaba Cloud DevOps Skill](https://github.com/aliyun/alibabacloud-aiops-skills/tree/master/skills/developertools/rdc/alibabacloud-devops)，
+也需将其作为 `alibabacloud-devops/` 放入同一 Skill 目录。安装完成后，重启或重新加载
+Agent 会话。
 
 安装后可以直接提出自然语言请求：
 
 - “列出我的云效项目。”
 - “查看分配给我且尚未解决的工作项。”
-- “在当前迭代中创建一个问题。”
+- “在项目中创建一个测试需求。”
 
-适配器将命令发现和业务流程交给官方 Skill，并指示 Agent 自动通过 `codeup` 执行，
-用户无需每次输入 `codeup exec`。上游的令牌环境变量检查、直接执行脚本和 MCP
-回退调用，由 `codeup` 的配置检查和执行流程替代。不会修改全局安装的第三方文件
-或官方 CLI 二进制文件。仓库中的插件 Skill 为已安装官方 Skill 的环境提供相同的
-执行指引。
-
-此集成依靠 Skill 指令引导执行，不是对任意可执行命令的透明拦截。
-自动化测试验证适配器安装和子进程调用；真实自然语言行为仍需按端到端验收步骤
-检查。凭据注入不构成对拥有同一系统用户任意 shell 权限的 Agent 的隔离。
+`aliyun-devops` Skill 使用官方 Skill 的业务流程，并指示 Agent 自动通过 `codeup`
+执行命令，用户无需每次输入 `codeup exec`。安全边界见
+[安全说明](docs/security.md)。
 
 ## 验证与文档
 
