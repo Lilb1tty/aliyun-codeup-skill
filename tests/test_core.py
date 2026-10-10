@@ -411,13 +411,52 @@ class CliTests(unittest.TestCase):
         original = self.store.read()["profiles"]["one"]
         args = cli.parser().parse_args(["setup", "--edition", "central", "--name", "one"])
         pin = {"path": str(Path(self.temp.name) / "aliyun"), "sha256": "0" * 64}
-        with patch.object(cli, "select_option", return_value="en"), patch.object(cli, "choose_executable", return_value=pin), patch.object(cli, "pin_executable", return_value=pin), patch.object(cli, "Credentials", return_value=self.memory), patch.object(cli.getpass, "getpass", return_value=""), patch("builtins.input", return_value=""), patch.object(runner, "validate_token") as validation, contextlib.redirect_stdout(io.StringIO()):
+        with patch.object(cli, "select_option", side_effect=["yes", "en"]), patch.object(cli, "choose_executable", return_value=pin), patch.object(cli, "pin_executable", return_value=pin), patch.object(cli, "Credentials", return_value=self.memory), patch.object(cli.getpass, "getpass", return_value=""), patch("builtins.input", return_value=""), patch.object(runner, "validate_token") as validation, contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(cli.setup(args, self.store), 0)
         self.assertEqual(self.store.read()["profiles"]["one"], original)
         self.assertEqual(list(self.memory.values.values()), [TOKEN])
         self.assertEqual(self.memory.sequence, 1)
         self.assertEqual(validation.call_args.args[2], TOKEN)
         self.assertEqual(validation.call_args.args[1]["organization_id"], CENTRAL["organization_id"])
+
+    def test_setup_existing_profile_defaults_to_keep_before_other_prompts(self):
+        cli.store_profile(self.store, self.memory, "one", REGION, TOKEN)
+        cli.store_profile(self.store, self.memory, "two", CENTRAL, "other-fake-pat")
+        with self.store.transaction() as current:
+            current["profiles"]["one"].pop("credential_ref")
+        for argv, name in ((["setup"], "two"), (["setup", "--name", "one"], "one"), (["--profile", "one", "setup"], "one")):
+            with self.subTest(argv=argv):
+                before = self.store.path.read_bytes()
+                vault_before = self.memory.values.copy()
+                args = cli.parser().parse_args(argv)
+                out = io.StringIO()
+                with patch("builtins.input", return_value="") as prompt, patch.object(cli.sys.stdin, "isatty", return_value=False), patch.object(cli, "choose_executable") as choose, patch.object(cli, "Credentials") as vault, patch.object(cli, "secret_prompt") as secret, patch.object(runner, "validate_token") as validation, contextlib.redirect_stdout(out):
+                    self.assertEqual(cli.setup(args, self.store), 0)
+                prompt.assert_called_once()
+                choose.assert_not_called()
+                vault.assert_not_called()
+                secret.assert_not_called()
+                validation.assert_not_called()
+                self.assertEqual(self.store.path.read_bytes(), before)
+                self.assertEqual(self.memory.values, vault_before)
+                self.assertEqual(json.loads(out.getvalue()[out.getvalue().index("{"):])["profile"], name)
+
+    def test_setup_new_name_skips_existing_profile_confirmation(self):
+        cli.store_profile(self.store, self.memory, "one", REGION, TOKEN)
+        args = cli.parser().parse_args(["setup", "--name", "new", "--edition", "central"])
+        with patch.object(cli, "select_option", return_value="en") as menu, patch.object(cli, "choose_executable", side_effect=CodeupError("cli_missing", "Test stop.")):
+            with self.assertRaises(CodeupError):
+                cli.setup(args, self.store)
+        menu.assert_called_once_with("Language / 语言", [("en", "English"), ("cn", "中文")])
+
+    def test_profile_add_duplicate_still_rejected_without_confirmation(self):
+        cli.store_profile(self.store, self.memory, "one", REGION, TOKEN)
+        args = cli.parser().parse_args(["profile", "add", "--name", "one"])
+        with patch.object(cli, "select_option") as menu:
+            with self.assertRaises(CodeupError) as error:
+                cli.setup(args, self.store, add=True)
+        self.assertEqual(error.exception.code, "profile_exists")
+        menu.assert_not_called()
 
     def test_blank_pat_without_stored_credential_is_rejected(self):
         args = cli.parser().parse_args(["setup", "--edition", "region", "--base-url", REGION["base_url"]])

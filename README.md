@@ -22,6 +22,9 @@ or run remote installation scripts. Choose English/Chinese, an edition and profi
 The wizard prompts for endpoint/organization, reads PAT through hidden terminal
 input, validates it with `base-get-user-by-token --quiet`, then stores it in the
 native credential vault. Validation errors suppress response content.
+Before other setup prompts, an existing selected profile triggers a reconfiguration
+choice. Enter keeps the current configuration and exits without accessing the vault
+or validating credentials. Choose Reconfigure to continue; a new profile skips this choice.
 During reconfiguration, blank organization ID/PAT input keeps existing values;
 keeping the PAT preserves its credential reference and recorded expiry. Blank CLI
 trust confirmation means yes (`[Y/n]`); entering `n` rejects the discovered path.

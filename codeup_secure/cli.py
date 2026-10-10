@@ -87,6 +87,14 @@ def setup(args, store, add: bool = False) -> int:
     if add and name in config["profiles"]:
         raise CodeupError("profile_exists", "Profile already exists.")
     old = config["profiles"].get(name, {})
+    if name in config["profiles"]:
+        choice = select_option(
+            f"Profile '{name}' already exists. Reconfigure? / 配置已存在，是否重新配置？",
+            [("no", "Keep current / 保留现有配置"), ("yes", "Reconfigure / 重新配置")],
+        )
+        if choice != "yes":
+            output({"profile": name, "configuration": "kept unchanged"})
+            return 0
     language = select_option("Language / 语言", [("en", "English"), ("cn", "中文")])
     edition = args.edition or select_option("Edition / 版本", [("region", "Region / 区域版"), ("central", "Central / 中心版")], 1 if old.get("edition") == "central" else 0)
     pin = choose_executable(args, config)
