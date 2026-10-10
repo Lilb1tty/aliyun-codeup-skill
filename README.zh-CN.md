@@ -40,7 +40,7 @@ codeup doctor
 片段或自定义端口。配置前请确认实例域名。
 
 ```sh
-codeup setup --name work --edition central --organization-id ORG_ID --cli-path /absolute/path/to/aliyun
+# 阿里云官方skill,可选 codeup setup --name work --edition central --organization-id ORG_ID --cli-path /absolute/path/to/aliyun
 codeup setup --name regional --edition region --base-url https://INSTANCE.devops.aliyuncs.com --expires-at 2026-12-01T00:00:00Z
 ```
 
