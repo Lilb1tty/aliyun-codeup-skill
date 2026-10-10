@@ -130,7 +130,7 @@ plugin, complete `codeup setup` and install the Skills. Choose Codex or Claude C
 when prompted:
 
 ```sh
-npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-devops
+#Chooseable.Aliyun Official skills npx skills add aliyun/alibabacloud-aiops-skills --skill alibabacloud-devops
 npx skills add Lilb1tty/aliyun-codeup-skill --skill aliyun-devops
 ```
 
