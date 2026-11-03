@@ -29,6 +29,14 @@ take precedence for this integration.
    Add `--authorize-write` before `exec` only for the approved action. Destructive
    operations additionally need `--authorize-destructive`; deployments and all
    Flow/AppStack writes need `--authorize-deployment`. Report policy denials.
+5. For every Project work item you create, set the iteration to the project's open
+   iteration, unless the user names another one. Find the open iteration with
+   `projex-list-sprints --id <projectId> --status DOING`, and pass its ID as `--sprint`
+   on `projex-create-workitem`. The launcher refuses this lookup without
+   `--authorize-write`, so include the lookup in the write confirmation for the create.
+   Show the iteration when you know it, and check it on read-back. If zero or several
+   iterations are `DOING`, ask the user which to use. Do not create or change an
+   iteration to satisfy this rule.
 
 Never request PATs in chat, inspect vault contents, export credentials or place
 them in command arguments. Profiles, endpoints and executable trust are configured
