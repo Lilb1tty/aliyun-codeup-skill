@@ -36,6 +36,7 @@ READ_COMMANDS = frozenset({
     'packages-list-repositories',
     'projex-get-sprint',
     'projex-get-workitem',
+    'projex-list-sprints',
     'projex-list-versions',
     'projex-list-workitem-types',
     'projex-search-projects',

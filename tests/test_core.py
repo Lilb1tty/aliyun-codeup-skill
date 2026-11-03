@@ -212,7 +212,7 @@ class ValidationTests(unittest.TestCase):
 
 class PolicyTests(unittest.TestCase):
     def test_reads_pass(self):
-        for command in ("codeup-list-repositories", "projex-search-workitems", "base-get-user-by-token", "flow-get-pipeline-run"):
+        for command in ("codeup-list-repositories", "projex-search-workitems", "projex-list-sprints", "base-get-user-by-token", "flow-get-pipeline-run"):
             self.assertFalse(policy.check([command, "--page", "1"]))
 
     def test_writes_and_unknown_blocked(self):
